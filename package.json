@@ -1,0 +1,74 @@
+{
+  "name": "recipe-manager",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "docker:up": "docker-compose --env-file .env.docker -f compose.yaml up -d",
+    "docker:down": "docker-compose --env-file .env.docker -f compose.yaml down",
+    "docker:logs": "docker-compose --env-file .env.docker -f compose.yaml logs -f postgres",
+    "docker:reset": "docker-compose --env-file .env.docker -f compose.yaml down --volumes",
+    "audit": "pnpm audit --prod",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "dependencies": {
+    "@better-auth/prisma-adapter": "1.6.18",
+    "@prisma/adapter-pg": "7.8.0",
+    "@prisma/client": "7.8.0",
+    "@radix-ui/react-label": "2.1.9",
+    "@radix-ui/react-slot": "1.2.5",
+    "@vercel/blob": "2.4.0",
+    "better-auth": "1.6.18",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.18.0",
+    "next": "16.2.9",
+    "pg": "8.21.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "server-only": "0.0.1",
+    "tailwind-merge": "3.6.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.0",
+    "@tailwindcss/postcss": "4.3.1",
+    "@types/node": "20.19.43",
+    "@types/pg": "8.20.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "4.1.9",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.9",
+    "prisma": "7.8.0",
+    "tailwindcss": "4.3.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.9"
+  },
+  "pnpm": {
+    "overrides": {
+      "@hono/node-server": "1.19.13",
+      "postcss": "8.5.10"
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}
