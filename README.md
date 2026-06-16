@@ -140,6 +140,16 @@ Cadastre as URLs de callback nos provedores:
 No deploy, substitua o host local pelo domínio definitivo da Vercel e configure
 `BETTER_AUTH_URL` com esse mesmo domínio.
 
+## Web Analytics
+
+Para registrar page views em produção, habilite Web Analytics no dashboard da
+Vercel para o projeto e faça um novo deploy. A integração usa
+`@vercel/analytics` no root layout e não exige variáveis de ambiente novas.
+
+Antes do envio, as URLs são sanitizadas para proteger dados privados: query
+strings e hashes são removidos, `/recipes/:id` vira `/recipes/[id]` e
+`/recipes/:id/edit` vira `/recipes/[id]/edit`.
+
 ## Comandos
 
 | Comando | Finalidade |
