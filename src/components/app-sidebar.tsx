@@ -89,12 +89,12 @@ export function AppSidebar({ user, tags }: AppSidebarProps) {
         <div className="flex items-center justify-between gap-3">
           <Link
             href="/recipes"
-            className="inline-flex items-center gap-2 font-display text-xl font-bold"
+            className="inline-flex items-center gap-2 font-display text-lg font-bold"
           >
             <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
               <ShoppingBag className="size-4" aria-hidden="true" />
             </span>
-            Cozinha
+            Recipe Manager
           </Link>
           <div className="flex items-center gap-2">
             <button
@@ -119,7 +119,7 @@ export function AppSidebar({ user, tags }: AppSidebarProps) {
             <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <ShoppingBag className="size-5" aria-hidden="true" />
             </span>
-            Cozinha
+            Recipe Manager
           </Link>
 
           <nav className="space-y-2" aria-label="Navegação principal">

@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 const isE2ETest = process.env.E2E_TEST_MODE === "true";
 
 export const auth = betterAuth({
-  appName: "Caderno de Receitas",
+  appName: "Recipe Manager",
   baseURL: process.env.BETTER_AUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, {

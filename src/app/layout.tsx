@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Caderno de Receitas",
-    template: "%s | Caderno de Receitas",
+    default: "Recipe Manager",
+    template: "%s | Recipe Manager",
   },
   description:
     "Organize suas receitas em um caderno pessoal, simples e bonito.",
