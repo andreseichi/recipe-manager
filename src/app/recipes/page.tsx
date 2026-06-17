@@ -35,6 +35,7 @@ export default async function RecipesPage({
   ]);
 
   const hasFilters = Boolean(query || tag);
+  const eagerImageRecipeId = recipes.find((recipe) => recipe.imageUrl)?.id;
 
   return (
     <main className="min-h-screen">
@@ -80,7 +81,13 @@ export default async function RecipesPage({
           <>
             <div className="mt-7 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
               {recipes.map((recipe) => (
-                <RecipeCard key={recipe.id} recipe={recipe} />
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  imageLoading={
+                    recipe.id === eagerImageRecipeId ? "eager" : "lazy"
+                  }
+                />
               ))}
             </div>
             <div className="mt-10">

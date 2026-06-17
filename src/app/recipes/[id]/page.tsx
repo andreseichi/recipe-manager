@@ -58,13 +58,13 @@ export default async function RecipePage({ params }: RecipePageProps) {
         </Link>
 
         <div className="mt-6 overflow-hidden rounded-[1.75rem] border border-dashed border-border bg-muted/70">
-          <div className="relative aspect-[16/6] min-h-64">
+          <div className="relative aspect-16/6 min-h-64">
             {recipe.imageUrl ? (
               <Image
                 src={recipe.imageUrl}
                 alt={`Foto de ${recipe.title}`}
                 fill
-                priority
+                preload
                 sizes="(max-width: 1024px) 100vw, 900px"
                 className="object-cover"
               />

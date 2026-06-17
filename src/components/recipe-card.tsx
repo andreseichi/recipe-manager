@@ -11,7 +11,15 @@ const difficultyLabels = {
   HARD: "Difícil",
 } as const;
 
-export function RecipeCard({ recipe }: { recipe: RecipeListItemDTO }) {
+type RecipeCardProps = {
+  recipe: RecipeListItemDTO;
+  imageLoading?: "eager" | "lazy";
+};
+
+export function RecipeCard({
+  recipe,
+  imageLoading = "lazy",
+}: RecipeCardProps) {
   const primaryTag = recipe.tags[0];
 
   return (
@@ -26,6 +34,7 @@ export function RecipeCard({ recipe }: { recipe: RecipeListItemDTO }) {
               src={recipe.imageUrl}
               alt=""
               fill
+              loading={imageLoading}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
               className="object-cover transition duration-500 group-hover:scale-105"
             />
