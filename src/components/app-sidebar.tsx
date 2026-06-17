@@ -1,35 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  Home,
-  LayoutGrid,
-  LogOut,
-  ShoppingBag,
-  Tags,
-} from "lucide-react";
+import { Home, LayoutGrid, LogOut, ShoppingBag } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-
-type SidebarTag = {
-  name: string;
-  normalizedName: string;
-  _count: {
-    recipes: number;
-  };
-};
 
 type AppSidebarProps = {
   user: {
     name: string;
     email: string;
   };
-  tags: SidebarTag[];
 };
-
-const collectionColors = ["bg-primary", "bg-accent", "bg-primary/35"];
 
 function getInitials(name: string) {
   return name
@@ -41,18 +24,10 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
-function getTagHref(tag: SidebarTag) {
-  const searchParams = new URLSearchParams();
-  searchParams.set("tag", tag.normalizedName);
-  return `/recipes?${searchParams.toString()}`;
-}
-
-export function AppSidebar({ user, tags }: AppSidebarProps) {
+export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [pending, setPending] = useState(false);
-  const selectedTag = searchParams.get("tag");
   const initials = getInitials(user.name) || "EU";
 
   async function signOut() {
@@ -74,12 +49,6 @@ export function AppSidebar({ user, tags }: AppSidebarProps) {
       href: "/recipes",
       icon: LayoutGrid,
       active: pathname.startsWith("/recipes"),
-    },
-    {
-      label: "Tags",
-      href: "/recipes#recipe-tags",
-      icon: Tags,
-      active: false,
     },
   ];
 
@@ -143,45 +112,7 @@ export function AppSidebar({ user, tags }: AppSidebarProps) {
             })}
           </nav>
 
-          <div
-            className="mt-9 min-h-0 flex-1 overflow-y-auto pr-1"
-            id="sidebar-collections"
-          >
-            <p className="px-3 text-xs font-bold uppercase tracking-[0.18em] text-muted-foreground">
-              Coleções
-            </p>
-            <div className="mt-3 space-y-1.5">
-              {tags.length ? (
-                tags.slice(0, 8).map((tag, index) => (
-                  <Link
-                    key={tag.normalizedName}
-                    href={getTagHref(tag)}
-                    className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground",
-                      selectedTag === tag.normalizedName &&
-                        "bg-secondary font-semibold text-primary",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "size-2 rounded-full",
-                        collectionColors[index % collectionColors.length],
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1 truncate">{tag.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {tag._count.recipes}
-                    </span>
-                  </Link>
-                ))
-              ) : (
-                <p className="px-3 py-2 text-xs leading-5 text-muted-foreground">
-                  Suas tags aparecerão aqui quando houver receitas.
-                </p>
-              )}
-            </div>
-          </div>
+          <div className="flex-1" aria-hidden="true" />
 
           <div className="mt-6 border-t border-border pt-4">
             <div className="flex items-center gap-3">
