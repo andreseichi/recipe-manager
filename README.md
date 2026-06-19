@@ -15,7 +15,8 @@ paginação e upload direto de imagens.
 - Criação, leitura, edição e exclusão de receitas.
 - Ingredientes e etapas ordenadas.
 - Busca por nome, filtro por tags e paginação.
-- Imagens JPEG, PNG ou WebP de até 5 MB no Vercel Blob.
+- Imagens JPEG, PNG ou WebP de até 5 MB no Vercel Blob, otimizadas no cliente
+  para WebP até 1600 px quando isso reduz o tamanho final.
 - Interface responsiva e acessível em português.
 - Validação no servidor e autorização repetida em cada operação.
 
@@ -198,6 +199,8 @@ imagens são cobertos pelos testes unitários.
 - O pathname do Blob deve pertencer ao namespace do usuário autenticado.
 - Imagens são públicas por URL, embora a receita e sua listagem sejam privadas.
 - A imagem anterior só é removida depois de a alteração no banco ser confirmada.
+- Uploads temporários de imagens são limpos em modo best-effort quando são
+  trocados ou removidos antes de salvar a receita.
 - Dependências diretas usam versões exatas e o pnpm executa pós-instalação apenas
   para os pacotes listados em `onlyBuiltDependencies`.
 
