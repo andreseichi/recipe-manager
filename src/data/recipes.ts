@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cache } from "react";
 import type { Difficulty, Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isOwnedRecipeImage } from "@/lib/image-policy";
@@ -191,7 +192,7 @@ export async function getUserTags() {
   });
 }
 
-export async function getRecipeById(id: string) {
+export const getRecipeById = cache(async (id: string) => {
   const user = await requireCurrentUser();
 
   return prisma.recipe.findFirst({
@@ -201,7 +202,7 @@ export async function getRecipeById(id: string) {
     },
     select: recipeDetailSelect,
   });
-}
+});
 
 export async function createRecipeRecord(input: RecipeInput) {
   const user = await requireCurrentUser();
