@@ -35,6 +35,8 @@ async function createRecipe(page: Page, title: string) {
 }
 
 test("landing and complete recipe workflow", async ({ page }) => {
+  test.setTimeout(120_000);
+
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: /Todas as suas receitas/i }),
@@ -69,6 +71,25 @@ test("landing and complete recipe workflow", async ({ page }) => {
   await page.getByRole("button", { name: "Excluir" }).click();
   await page.getByRole("button", { name: "Excluir receita" }).click();
   await expect(page).toHaveURL(/\/recipes$/);
+
+  const batchId = Date.now();
+
+  for (let index = 1; index <= 13; index += 1) {
+    await createRecipe(page, `Receita paginada ${batchId}-${index}`);
+  }
+
+  await page.goto("/recipes?view=grid");
+  await expect(page.getByText("Página 1 de 2")).toBeVisible();
+
+  await page.getByRole("link", { name: /Próxima/ }).click();
+  await expect(page).toHaveURL(/view=grid/);
+  await expect(page).toHaveURL(/page=2/);
+  await expect(page.getByText("Página 2 de 2")).toBeVisible();
+
+  await page.getByRole("link", { name: /Anterior/ }).click();
+  await expect(page).toHaveURL(/view=grid/);
+  await expect(page).not.toHaveURL(/page=2/);
+  await expect(page.getByText("Página 1 de 2")).toBeVisible();
 });
 
 test("a user cannot open another user's recipe by id", async ({ page }) => {

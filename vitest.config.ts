@@ -13,6 +13,7 @@ export default defineConfig({
       include: [
         "src/lib/image-constraints.ts",
         "src/lib/image-policy.ts",
+        "src/lib/pagination.ts",
         "src/lib/validations/recipe.ts",
       ],
     },

@@ -4,6 +4,7 @@ import { cache } from "react";
 import type { Difficulty, Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isOwnedRecipeImage } from "@/lib/image-policy";
+import { getPaginationState } from "@/lib/pagination";
 import { requireCurrentUser } from "@/lib/session";
 import {
   normalizeTagName,
@@ -118,7 +119,7 @@ async function removeOrphanTags(
 
 export async function getRecipeList(filters: RecipeListFilters) {
   const user = await requireCurrentUser();
-  const page = Math.max(1, Math.trunc(filters.page) || 1);
+  const requestedPage = Math.max(1, Math.trunc(filters.page) || 1);
   const query = filters.query?.trim();
   const normalizedTag = filters.tag
     ? normalizeTagName(filters.tag)
@@ -146,24 +147,30 @@ export async function getRecipeList(filters: RecipeListFilters) {
       : {}),
   };
 
-  const [total, recipes] = await prisma.$transaction([
-    prisma.recipe.count({ where }),
-    prisma.recipe.findMany({
-      where,
-      select: recipeListSelect,
-      orderBy: {
-        updatedAt: "desc",
-      },
-      skip: (page - 1) * RECIPES_PER_PAGE,
-      take: RECIPES_PER_PAGE,
-    }),
-  ]);
+  const total = await prisma.recipe.count({ where });
+  const { page, totalPages } = getPaginationState({
+    requestedPage,
+    total,
+    perPage: RECIPES_PER_PAGE,
+  });
+
+  const recipes = total
+    ? await prisma.recipe.findMany({
+        where,
+        select: recipeListSelect,
+        orderBy: {
+          updatedAt: "desc",
+        },
+        skip: (page - 1) * RECIPES_PER_PAGE,
+        take: RECIPES_PER_PAGE,
+      })
+    : [];
 
   return {
     recipes,
     page,
     total,
-    totalPages: Math.max(1, Math.ceil(total / RECIPES_PER_PAGE)),
+    totalPages,
   };
 }
 
