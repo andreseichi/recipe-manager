@@ -7,16 +7,18 @@ type PaginationProps = {
   totalPages: number;
   query?: string;
   tag?: string;
+  view?: "list" | "grid";
 };
 
 function getPageHref(
   page: number,
-  filters: Pick<PaginationProps, "query" | "tag">,
+  filters: Pick<PaginationProps, "query" | "tag" | "view">,
 ) {
   const searchParams = new URLSearchParams();
 
   if (filters.query) searchParams.set("q", filters.query);
   if (filters.tag) searchParams.set("tag", filters.tag);
+  if (filters.view) searchParams.set("view", filters.view);
   if (page > 1) searchParams.set("page", String(page));
 
   const queryString = searchParams.toString();
@@ -28,6 +30,7 @@ export function Pagination({
   totalPages,
   query,
   tag,
+  view,
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
@@ -36,45 +39,35 @@ export function Pagination({
       className="flex items-center justify-center gap-3"
       aria-label="Paginação das receitas"
     >
-      <Button
-        asChild={page > 1}
-        variant="outline"
-        size="sm"
-        disabled={page <= 1}
-      >
-        {page > 1 ? (
-          <Link href={getPageHref(page - 1, { query, tag })}>
+      {page > 1 ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={getPageHref(page - 1, { query, tag, view })}>
             <ChevronLeft className="size-4" aria-hidden="true" />
             Anterior
           </Link>
-        ) : (
-          <span>
-            <ChevronLeft className="size-4" aria-hidden="true" />
-            Anterior
-          </span>
-        )}
-      </Button>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          <ChevronLeft className="size-4" aria-hidden="true" />
+          Anterior
+        </Button>
+      )}
       <span className="text-sm font-medium text-muted-foreground">
         Página {page} de {totalPages}
       </span>
-      <Button
-        asChild={page < totalPages}
-        variant="outline"
-        size="sm"
-        disabled={page >= totalPages}
-      >
-        {page < totalPages ? (
-          <Link href={getPageHref(page + 1, { query, tag })}>
+      {page < totalPages ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href={getPageHref(page + 1, { query, tag, view })}>
             Próxima
             <ChevronRight className="size-4" aria-hidden="true" />
           </Link>
-        ) : (
-          <span>
-            Próxima
-            <ChevronRight className="size-4" aria-hidden="true" />
-          </span>
-        )}
-      </Button>
+        </Button>
+      ) : (
+        <Button variant="outline" size="sm" disabled>
+          Próxima
+          <ChevronRight className="size-4" aria-hidden="true" />
+        </Button>
+      )}
     </nav>
   );
 }

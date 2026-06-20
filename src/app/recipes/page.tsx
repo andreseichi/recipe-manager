@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { BookOpenText, Plus, SlidersHorizontal } from "lucide-react";
+import {
+  BookOpenText,
+  Grid2X2,
+  List,
+  SlidersHorizontal,
+} from "lucide-react";
 import { getRecipeList, getUserTags } from "@/data/recipes";
+import { AuthenticatedRecipesShell } from "@/components/authenticated-recipes-shell";
 import { Pagination } from "@/components/pagination";
-import { RecipeCard } from "@/components/recipe-card";
+import { RecipeCard, RecipeListItem } from "@/components/recipe-card";
 import { RecipeFilters, RecipeSearch } from "@/components/recipe-filters";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,8 +23,29 @@ type RecipesPageProps = {
     q?: string;
     tag?: string;
     page?: string;
+    view?: string;
   }>;
 };
+
+type RecipeViewMode = "list" | "grid";
+
+function getViewHref(
+  nextView: RecipeViewMode,
+  filters: {
+    query?: string;
+    tag?: string;
+    page: number;
+  },
+) {
+  const searchParams = new URLSearchParams();
+
+  if (filters.query) searchParams.set("q", filters.query);
+  if (filters.tag) searchParams.set("tag", filters.tag);
+  if (filters.page > 1) searchParams.set("page", String(filters.page));
+  searchParams.set("view", nextView);
+
+  return `/recipes?${searchParams.toString()}`;
+}
 
 export default async function RecipesPage({
   searchParams,
@@ -26,81 +53,120 @@ export default async function RecipesPage({
   const params = await searchParams;
   const query = params.q?.trim().slice(0, 120);
   const tag = params.tag?.trim().slice(0, 40);
+  const view: RecipeViewMode = params.view === "list" ? "list" : "grid";
   const requestedPage = Number.parseInt(params.page ?? "1", 10);
   const page = Number.isFinite(requestedPage) ? Math.max(1, requestedPage) : 1;
 
-  const [{ recipes, total, totalPages }, tags] = await Promise.all([
-    getRecipeList({ query, tag, page }),
-    getUserTags(),
-  ]);
+
+  const [{ recipes, total, totalPages, page: currentPage }, tags] =
+    await Promise.all([getRecipeList({ query, tag, page }), getUserTags()]);
 
   const hasFilters = Boolean(query || tag);
   const eagerImageRecipeId = recipes.find((recipe) => recipe.imageUrl)?.id;
 
   return (
-    <main className="min-h-screen">
-      <div className="border-b border-border bg-background/85 px-4 py-5 sm:px-6 lg:px-10">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <RecipeSearch query={query} selectedTag={tag} />
-          <Button
-            asChild
-            size="default"
-            className="px-6 shadow-lg shadow-primary/20"
-          >
-            <Link href="/recipes/new">
-              <Plus className="size-4" aria-hidden="true" />
-              Nova receita
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      <div className="mx-auto px-4 py-8 sm:px-6 lg:px-10">
-        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-bold tracking-tight sm:text-5xl">
-              Todas as receitas
-            </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {total === 1
-                ? "1 receita na sua cozinha"
-                : `${total} receitas na sua cozinha`}
-            </p>
+    <AuthenticatedRecipesShell
+      centerContent={
+        <RecipeSearch query={query} selectedTag={tag} view={view} />
+      }
+    >
+      <main className="bg-muted/20">
+        <h1 className="sr-only">Todas as receitas</h1>
+        <section className="bg-background">
+          <div className="border-b border-border px-4 py-3 sm:px-7">
+            <RecipeFilters
+              query={query}
+              selectedTag={tag}
+              view={view}
+              tags={tags}
+            />
           </div>
-          <span className="inline-flex h-10 items-center gap-2 self-start rounded-xl border border-border bg-card px-4 text-sm font-medium text-muted-foreground shadow-sm md:self-auto">
-            <SlidersHorizontal className="size-4" aria-hidden="true" />
-            Recentes
-          </span>
-        </div>
 
-        <div className="mt-6">
-          <RecipeFilters query={query} selectedTag={tag} tags={tags} />
-        </div>
-
-        {recipes.length ? (
-          <>
-            <div className="mt-7 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-              {recipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  imageLoading={
-                    recipe.id === eagerImageRecipeId ? "eager" : "lazy"
-                  }
-                />
-              ))}
+          <div className="flex flex-col gap-4 border-b border-border px-4 py-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-7">
+            <p>{total === 1 ? "1 receita" : `${total} receitas`}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-2">
+                <SlidersHorizontal className="size-4" aria-hidden="true" />
+                Ordenar: recentes
+              </span>
+              <div
+                className="inline-flex rounded-full border border-border bg-card p-1"
+                role="group"
+                aria-label="Modo de visualização"
+              >
+                <Button
+                  asChild
+                  variant={view === "list" ? "default" : "ghost"}
+                  size="sm"
+                  className="h-8 px-3"
+                >
+                  <Link
+                    href={getViewHref("list", { query, tag, page: currentPage })}
+                    aria-label="Ver receitas em lista"
+                    aria-current={view === "list" ? "page" : undefined}
+                  >
+                    <List className="size-4" aria-hidden="true" />
+                    Lista
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant={view === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  className="h-8 px-3"
+                >
+                  <Link
+                    href={getViewHref("grid", { query, tag, page: currentPage })}
+                    aria-label="Ver receitas em grid"
+                    aria-current={view === "grid" ? "page" : undefined}
+                  >
+                    <Grid2X2 className="size-4" aria-hidden="true" />
+                    Grid
+                  </Link>
+                </Button>
+              </div>
             </div>
-            <div className="mt-10">
+          </div>
+
+          {recipes.length ? (
+            <>
+            {view === "list" ? (
+              <div>
+                {recipes.map((recipe) => (
+                  <RecipeListItem
+                    key={recipe.id}
+                    recipe={recipe}
+                    imageLoading={
+                      recipe.id === eagerImageRecipeId ? "eager" : "lazy"
+                    }
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-6 p-4 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
+                {recipes.map((recipe) => (
+                  <RecipeCard
+                    key={recipe.id}
+                    recipe={recipe}
+                    imageLoading={
+                      recipe.id === eagerImageRecipeId ? "eager" : "lazy"
+                    }
+                  />
+                ))}
+              </div>
+            )}
+            <div className="border-t border-border px-4 py-6 sm:px-7">
               <Pagination
-                page={page}
+                page={currentPage}
                 totalPages={totalPages}
                 query={query}
                 tag={tag}
+                view={view}
               />
             </div>
-          </>
-        ) : (
-          <Card className="mt-7 flex flex-col items-center border-dashed bg-card px-6 py-16 text-center">
+            </>
+          ) : (
+            <Card className="m-4 flex flex-col items-center border-dashed bg-card px-6 py-16 text-center sm:m-7">
             <span className="grid size-16 place-items-center rounded-3xl bg-secondary text-primary">
               <BookOpenText className="size-7" aria-hidden="true" />
             </span>
@@ -119,9 +185,10 @@ export default async function RecipesPage({
                 {hasFilters ? "Limpar filtros" : "Criar primeira receita"}
               </Link>
             </Button>
-          </Card>
-        )}
-      </div>
-    </main>
+            </Card>
+          )}
+        </section>
+      </main>
+    </AuthenticatedRecipesShell>
   );
 }

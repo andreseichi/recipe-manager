@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock3, ImageIcon, UsersRound } from "lucide-react";
+import { Clock3, ImageIcon, MoreHorizontal, UsersRound } from "lucide-react";
 import type { RecipeListItemDTO } from "@/data/recipes";
 import { Card } from "@/components/ui/card";
 import { formatMinutes } from "@/lib/utils";
@@ -79,6 +79,74 @@ export function RecipeCard({
           </div>
         </div>
       </Card>
+    </Link>
+  );
+}
+
+export function RecipeListItem({
+  recipe,
+  imageLoading = "lazy",
+}: RecipeCardProps) {
+  const primaryTag = recipe.tags[0];
+
+  return (
+    <Link
+      href={`/recipes/${recipe.id}`}
+      className="group block border-b border-border last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+    >
+      <article className="grid gap-4 bg-background px-4 py-4 transition hover:bg-muted/35 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:items-center sm:px-7">
+        <div className="relative size-20 overflow-hidden rounded-xl border border-border bg-muted/50">
+          {recipe.imageUrl ? (
+            <Image
+              src={recipe.imageUrl}
+              alt=""
+              fill
+              loading={imageLoading}
+              sizes="80px"
+              className="object-cover transition duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="grid h-full place-items-center bg-[repeating-linear-gradient(45deg,var(--muted),var(--muted)_8px,transparent_8px,transparent_16px)] text-muted-foreground">
+              <ImageIcon className="size-5" aria-hidden="true" />
+            </div>
+          )}
+        </div>
+
+        <div className="min-w-0">
+          <h2 className="font-display text-xl font-bold leading-tight transition-colors group-hover:text-primary">
+            {recipe.title}
+          </h2>
+          <p className="mt-2 max-w-xl truncate text-sm text-muted-foreground">
+            {recipe.description || "Sem descrição adicionada."}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground sm:justify-end">
+          <div className="flex min-w-32 items-center gap-2 whitespace-nowrap">
+            {recipe.prepTimeMinutes ? (
+              <span>{formatMinutes(recipe.prepTimeMinutes)}</span>
+            ) : null}
+            {recipe.prepTimeMinutes && recipe.difficulty ? (
+              <span aria-hidden="true">•</span>
+            ) : null}
+            {recipe.difficulty ? (
+              <span>{difficultyLabels[recipe.difficulty]}</span>
+            ) : null}
+          </div>
+          {primaryTag ? (
+            <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
+              {primaryTag.name}
+            </span>
+          ) : null}
+          {recipe.servings ? (
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs">
+              <UsersRound className="size-3.5" aria-hidden="true" />
+              {recipe.servings}
+            </span>
+          ) : null}
+          <MoreHorizontal className="size-4" aria-hidden="true" />
+        </div>
+      </article>
     </Link>
   );
 }

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/app-sidebar";
 import { getCurrentSession } from "@/lib/session";
 
 export default async function RecipesLayout({
@@ -13,15 +12,5 @@ export default async function RecipesLayout({
     redirect("/");
   }
 
-  return (
-    <div className="min-h-screen lg:pl-64">
-      <AppSidebar
-        user={{
-          name: session.user.name,
-          email: session.user.email,
-        }}
-      />
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }

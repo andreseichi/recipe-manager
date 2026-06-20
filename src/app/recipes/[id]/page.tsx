@@ -10,6 +10,7 @@ import {
   Pencil,
   UsersRound,
 } from "lucide-react";
+import { AuthenticatedRecipesShell } from "@/components/authenticated-recipes-shell";
 import { getRecipeById } from "@/data/recipes";
 import { Button } from "@/components/ui/button";
 import { DeleteRecipeButton } from "@/components/delete-recipe-button";
@@ -47,8 +48,9 @@ export default async function RecipePage({ params }: RecipePageProps) {
   const primaryTag = recipe.tags[0];
 
   return (
-    <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
-      <div className="mx-auto">
+    <AuthenticatedRecipesShell>
+      <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-10">
+        <div className="mx-auto">
         <Link
           href="/recipes"
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition hover:text-primary"
@@ -195,7 +197,8 @@ export default async function RecipePage({ params }: RecipePageProps) {
         <p className="mt-10 text-xs text-muted-foreground">
           Atualizada em {formatDate(recipe.updatedAt)}
         </p>
-      </div>
-    </main>
+        </div>
+      </main>
+    </AuthenticatedRecipesShell>
   );
 }
