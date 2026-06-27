@@ -67,6 +67,7 @@ Crie `.env` a partir de `.env.example` e preencha:
 
 ```env
 DATABASE_URL="postgresql://..."
+DATABASE_URL_UNPOOLED="postgresql://..."
 BETTER_AUTH_SECRET="uma-chave-aleatoria-com-pelo-menos-32-caracteres"
 BETTER_AUTH_URL="http://localhost:3000"
 GOOGLE_CLIENT_ID=""
@@ -74,6 +75,12 @@ GOOGLE_CLIENT_SECRET=""
 BLOB_READ_WRITE_TOKEN=""
 E2E_TEST_MODE="false"
 ```
+
+`DATABASE_URL` é usada pelo runtime da aplicação. Em produção com Neon/Vercel,
+use a variável recomendada para a maioria dos usos, que passa pelo PgBouncer.
+`DATABASE_URL_UNPOOLED` é usada pelo Prisma CLI para migrations e deve apontar
+para a conexão sem PgBouncer. O alias `DIRECT_URL` também é aceito e tem
+precedência quando definido.
 
 Gere o Prisma Client e aplique a migration:
 
@@ -100,10 +107,11 @@ Copy-Item .env.docker.example .env.docker
 ```
 
 Troque `POSTGRES_PASSWORD` por uma senha local segura e use os mesmos dados no
-`DATABASE_URL` do `.env` da aplicação:
+`DATABASE_URL` e no `DATABASE_URL_UNPOOLED` do `.env` da aplicação:
 
 ```env
 DATABASE_URL="postgresql://recipe_manager:sua_senha@localhost:5432/recipe_manager?schema=public"
+DATABASE_URL_UNPOOLED="postgresql://recipe_manager:sua_senha@localhost:5432/recipe_manager?schema=public"
 ```
 
 Suba o PostgreSQL:
@@ -130,7 +138,8 @@ pnpm docker:reset
 
 `pnpm docker:down` preserva os dados do PostgreSQL. `pnpm docker:reset` remove
 também o volume local do banco. Se a porta `5432` já estiver ocupada, altere
-`POSTGRES_PORT` em `.env.docker` e use a mesma porta no `DATABASE_URL`.
+`POSTGRES_PORT` em `.env.docker` e use a mesma porta no `DATABASE_URL` e no
+`DATABASE_URL_UNPOOLED`.
 
 ## OAuth
 
@@ -163,9 +172,9 @@ strings e hashes são removidos, `/recipes/:id` vira `/recipes/[id]` e
 | `pnpm test:e2e` | Fluxos Playwright |
 | `pnpm test:coverage` | Cobertura unitária |
 | `pnpm audit` | Auditoria das dependências de produção |
-| `pnpm db:migrate` | Migration em desenvolvimento |
-| `pnpm db:deploy` | Aplica migrations em produção |
-| `pnpm db:studio` | Interface do Prisma Studio |
+| `pnpm db:migrate` | Migration em desenvolvimento usando `DATABASE_URL_UNPOOLED` |
+| `pnpm db:deploy` | Aplica migrations usando `DATABASE_URL_UNPOOLED` |
+| `pnpm db:studio` | Interface do Prisma Studio usando `DATABASE_URL_UNPOOLED` |
 
 | `pnpm docker:up` | Inicia o PostgreSQL em container |
 | `pnpm docker:down` | Para o PostgreSQL sem apagar o volume |
@@ -178,7 +187,7 @@ Os testes E2E habilitam login por e-mail somente quando
 `E2E_TEST_MODE=true`. Essa opção deve ser usada exclusivamente em banco
 isolado local ou de CI e nunca no ambiente público.
 
-Com um `DATABASE_URL` de teste configurado:
+Com `DATABASE_URL` e `DATABASE_URL_UNPOOLED` de teste configurados:
 
 ```bash
 pnpm db:deploy
@@ -208,9 +217,11 @@ imagens são cobertos pelos testes unitários.
 
 1. Crie o PostgreSQL no Neon e o Blob Store na Vercel.
 2. Configure todas as variáveis de `.env.example`.
-3. Use `pnpm db:deploy` para aplicar migrations no banco de produção.
-4. Cadastre os callbacks OAuth com o domínio final.
-5. Faça o deploy e valide login, CRUD, upload e acesso em dispositivo móvel.
+3. Em produção com Neon/Vercel, mantenha `DATABASE_URL` como a URL recomendada
+   e `DATABASE_URL_UNPOOLED` como a conexão sem PgBouncer.
+4. Use `pnpm db:deploy` para aplicar migrations no banco de produção.
+5. Cadastre os callbacks OAuth com o domínio final.
+6. Faça o deploy e valide login, CRUD, upload e acesso em dispositivo móvel.
 
 A workflow em `.github/workflows/ci.yml` executa migration, lint, typecheck,
 testes unitários, build e Playwright com PostgreSQL isolado.

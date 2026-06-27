@@ -25,6 +25,7 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/recipe_manager_test
+      DATABASE_URL_UNPOOLED: postgresql://postgres:postgres@localhost:5432/recipe_manager_test
       BETTER_AUTH_SECRET: ci-secret-with-at-least-thirty-two-characters
       BETTER_AUTH_URL: http://127.0.0.1:3000
       GOOGLE_CLIENT_ID: ci-google-client
