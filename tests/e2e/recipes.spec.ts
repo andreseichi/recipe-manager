@@ -34,6 +34,22 @@ async function createRecipe(page: Page, title: string) {
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
 }
 
+function getReleaseToast(page: Page) {
+  return page.locator('[aria-label="Toast de novidades da versao"]');
+}
+
+async function acknowledgeReleaseNotice(page: Page) {
+  const notice = getReleaseToast(page);
+
+  await expect(notice).toBeVisible();
+  await page.getByRole("button", { name: "Ver novidades" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Avisos de novidades no app" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Entendi" }).last().click();
+  await expect(notice).toHaveCount(0);
+}
+
 test("landing and complete recipe workflow", async ({ page }) => {
   test.setTimeout(120_000);
 
@@ -44,6 +60,7 @@ test("landing and complete recipe workflow", async ({ page }) => {
 
   await createTestUser(page, "fluxo");
   await page.goto("/recipes");
+  await acknowledgeReleaseNotice(page);
 
   const title = `Bolo E2E ${Date.now()}`;
   await createRecipe(page, title);
@@ -90,6 +107,20 @@ test("landing and complete recipe workflow", async ({ page }) => {
   await expect(page).toHaveURL(/view=grid/);
   await expect(page).not.toHaveURL(/page=2/);
   await expect(page.getByText("Página 1 de 2")).toBeVisible();
+});
+
+test("release notice is persisted per user", async ({ page }) => {
+  await createTestUser(page, "release-owner");
+  await page.goto("/recipes");
+  await acknowledgeReleaseNotice(page);
+
+  await page.reload();
+  await expect(getReleaseToast(page)).toHaveCount(0);
+
+  await page.context().clearCookies();
+  await createTestUser(page, "release-visitor");
+  await page.goto("/recipes");
+  await expect(getReleaseToast(page)).toBeVisible();
 });
 
 test("a user cannot open another user's recipe by id", async ({ page }) => {

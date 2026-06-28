@@ -14,17 +14,18 @@ enum Difficulty {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  recipes       Recipe[]
-  tags          Tag[]
+  id                      String                   @id
+  name                    String
+  email                   String                   @unique
+  emailVerified           Boolean                  @default(false)
+  image                   String?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  sessions                Session[]
+  accounts                Account[]
+  recipes                 Recipe[]
+  tags                    Tag[]
+  releaseAcknowledgements ReleaseAcknowledgement[]
 
   @@map("user")
 }
@@ -60,8 +61,8 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
-  @@index([userId])
   @@unique([providerId, accountId])
+  @@index([userId])
   @@map("account")
 }
 
@@ -110,4 +111,16 @@ model Tag {
   @@unique([userId, normalizedName])
   @@index([userId, name])
   @@map("tag")
+}
+
+model ReleaseAcknowledgement {
+  id        String   @id @default(cuid())
+  releaseId String   @db.VarChar(80)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seenAt    DateTime @default(now())
+
+  @@unique([userId, releaseId])
+  @@index([releaseId])
+  @@map("release_acknowledgement")
 }

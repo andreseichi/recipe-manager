@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { AppTopbar } from "@/components/app-topbar";
+import { ReleaseNotification } from "@/components/release-notification";
+import { getPendingReleaseForUser } from "@/data/releases";
 import { getCurrentSession } from "@/lib/session";
 
 type AuthenticatedRecipesShellProps = {
@@ -17,6 +19,8 @@ export async function AuthenticatedRecipesShell({
     redirect("/");
   }
 
+  const pendingRelease = await getPendingReleaseForUser(session.user.id);
+
   return (
     <div className="min-h-screen">
       <AppTopbar
@@ -26,6 +30,7 @@ export async function AuthenticatedRecipesShell({
         }}
         centerContent={centerContent}
       />
+      <ReleaseNotification release={pendingRelease} />
       {children}
     </div>
   );
