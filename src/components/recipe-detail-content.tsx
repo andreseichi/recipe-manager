@@ -26,8 +26,6 @@ export function RecipeDetailContent({
   emptyImageHint = "adicione uma imagem na edição",
   showUpdatedAt = true,
 }: RecipeDetailContentProps) {
-  const primaryTag = recipe.tags[0];
-
   return (
     <main className={cn("min-h-screen px-4 py-8 sm:px-6 lg:px-10", className)}>
       <div className="mx-auto">
@@ -62,12 +60,22 @@ export function RecipeDetailContent({
 
         <section className="mt-7 grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
           <div>
-            {primaryTag ? (
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-primary">
-                {primaryTag.name}
-              </p>
+            {recipe.tags.length ? (
+              <div
+                className="mb-4 flex flex-wrap gap-2"
+                aria-label="Tags da receita"
+              >
+                {recipe.tags.map((tag) => (
+                  <span
+                    key={tag.normalizedName}
+                    className="rounded-full border border-primary/20 bg-secondary px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.08em] text-primary shadow-sm"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
             ) : null}
-            <h1 className="mt-2 font-display text-4xl font-bold leading-tight tracking-tight text-balance sm:text-5xl">
+            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-balance sm:text-5xl">
               {recipe.title}
             </h1>
             {recipe.description ? (

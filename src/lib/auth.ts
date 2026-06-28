@@ -30,7 +30,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24,
   },
   rateLimit: {
-    enabled: true,
+    enabled: !isE2ETest,
     window: 60,
     max: 100,
   },

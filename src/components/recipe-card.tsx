@@ -20,8 +20,6 @@ export function RecipeCard({
   recipe,
   imageLoading = "lazy",
 }: RecipeCardProps) {
-  const primaryTag = recipe.tags[0];
-
   return (
     <Link
       href={`/recipes/${recipe.id}`}
@@ -48,16 +46,23 @@ export function RecipeCard({
               </div>
             </div>
           )}
-          {primaryTag ? (
-            <span className="absolute bottom-3 left-3 rounded-full bg-foreground/80 px-3 py-1 text-xs font-bold text-background shadow-sm backdrop-blur">
-              {primaryTag.name}
-            </span>
-          ) : null}
         </div>
         <div className="p-5">
           <h2 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
             {recipe.title}
           </h2>
+          {recipe.tags.length ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag.normalizedName}
+                  className="rounded-full border border-border bg-secondary/70 px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-muted-foreground">
             {recipe.prepTimeMinutes ? (
               <span className="inline-flex items-center gap-1.5">
@@ -88,8 +93,6 @@ export function RecipeListItem({
   recipe,
   imageLoading = "lazy",
 }: RecipeCardProps) {
-  const primaryTag = recipe.tags[0];
-
   return (
     <Link
       href={`/recipes/${recipe.id}`}
@@ -121,6 +124,18 @@ export function RecipeListItem({
           <p className="mt-2 max-w-xl truncate text-sm text-muted-foreground">
             {recipe.description || "Sem descrição adicionada."}
           </p>
+          {recipe.tags.length ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag.normalizedName}
+                  className="rounded-full border border-border bg-card px-2.5 py-1 text-xs font-semibold text-muted-foreground"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground sm:justify-end">
@@ -135,11 +150,6 @@ export function RecipeListItem({
               <span>{difficultyLabels[recipe.difficulty]}</span>
             ) : null}
           </div>
-          {primaryTag ? (
-            <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
-              {primaryTag.name}
-            </span>
-          ) : null}
           {recipe.servings ? (
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs">
               <UsersRound className="size-3.5" aria-hidden="true" />

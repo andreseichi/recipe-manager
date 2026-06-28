@@ -16,6 +16,9 @@ async function createTestUser(page: Page, prefix: string) {
 
 async function signInTestUser(page: Page, email: string) {
   const response = await page.request.post("/api/auth/sign-in/email", {
+    headers: {
+      Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
+    },
     data: {
       email,
       password: "test-password-123",
@@ -27,6 +30,7 @@ async function signInTestUser(page: Page, email: string) {
 
 async function createRecipe(page: Page, title: string) {
   await page.goto("/recipes/new");
+  await dismissReleaseNoticeIfVisible(page);
   await page.getByLabel("Nome da receita").fill(title);
   await page
     .getByLabel("Descrição")
@@ -45,8 +49,48 @@ async function createRecipe(page: Page, title: string) {
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
 }
 
+async function expectRecipePreviewTags(
+  page: Page,
+  title: string,
+  tags: string[],
+) {
+  const recipePreview = page
+    .getByRole("link")
+    .filter({ has: page.getByRole("heading", { name: title }) })
+    .first();
+
+  await expect(recipePreview).toBeVisible();
+
+  for (const tag of tags) {
+    await expect(recipePreview.getByText(tag, { exact: true })).toBeVisible();
+  }
+}
+
+async function expectRecipeDetailTags(page: Page, tags: string[]) {
+  const tagsRegion = page.getByLabel("Tags da receita");
+
+  await expect(tagsRegion).toBeVisible();
+
+  for (const tag of tags) {
+    await expect(tagsRegion.getByText(tag, { exact: true })).toBeVisible();
+  }
+}
+
 function getReleaseToast(page: Page) {
   return page.locator('[aria-label="Toast de novidades da versao"]');
+}
+
+async function dismissReleaseNoticeIfVisible(page: Page) {
+  const notice = getReleaseToast(page);
+
+  try {
+    await notice.waitFor({ state: "visible", timeout: 2_000 });
+  } catch {
+    return;
+  }
+
+  await notice.getByRole("button", { name: "Entendi" }).click();
+  await expect(notice).toHaveCount(0);
 }
 
 async function acknowledgeReleaseNotice(page: Page) {
@@ -54,10 +98,10 @@ async function acknowledgeReleaseNotice(page: Page) {
 
   await expect(notice).toBeVisible();
   await page.getByRole("button", { name: "Ver novidades" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "Avisos de novidades no app" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Entendi" }).last().click();
+  const dialog = page.getByRole("dialog");
+
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Entendi" }).click();
   await expect(notice).toHaveCount(0);
 }
 
@@ -75,6 +119,7 @@ test("landing and complete recipe workflow", async ({ page }) => {
 
   const title = `Bolo E2E ${Date.now()}`;
   await createRecipe(page, title);
+  await expectRecipeDetailTags(page, ["teste", "rápido"]);
 
   await page.getByRole("link", { name: "Editar" }).click();
   await page.getByLabel("Nome da receita").fill(`${title} editado`);
@@ -82,6 +127,7 @@ test("landing and complete recipe workflow", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: `${title} editado` }),
   ).toBeVisible();
+  await expectRecipeDetailTags(page, ["teste", "rápido"]);
 
   await page.goto("/recipes");
   await page.getByLabel("Buscar receitas pelo nome").fill("Bolo E2E");
@@ -89,6 +135,16 @@ test("landing and complete recipe workflow", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: `${title} editado` }),
   ).toBeVisible();
+  await expectRecipePreviewTags(page, `${title} editado`, [
+    "teste",
+    "rápido",
+  ]);
+
+  await page.getByRole("link", { name: "Ver receitas em lista" }).click();
+  await expectRecipePreviewTags(page, `${title} editado`, [
+    "teste",
+    "rápido",
+  ]);
 
   await page.getByRole("link", { name: "rápido", exact: true }).click();
   await expect(
