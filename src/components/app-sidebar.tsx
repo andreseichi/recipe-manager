@@ -64,7 +64,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
               <ShoppingBag className="size-4" aria-hidden="true" />
             </span>
-            Recipe Manager
+            Baú de Receitas
           </Link>
           <div className="flex items-center gap-2">
             <button
@@ -90,7 +90,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
             <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <ShoppingBag className="size-5" aria-hidden="true" />
             </span>
-            Recipe Manager
+            Baú de Receitas
           </Link>
 
           <nav className="space-y-2" aria-label="Navegação principal">

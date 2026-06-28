@@ -48,7 +48,7 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
           <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
             <ShoppingBag className="size-5" aria-hidden="true" />
           </span>
-          Recipe Manager
+          Baú de Receitas
         </Link>
 
         {centerContent ? (

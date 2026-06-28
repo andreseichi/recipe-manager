@@ -1,10 +1,10 @@
-# Recipe Manager
+# Baú de Receitas
 
 Aplicação full-stack para organizar receitas culinárias privadas por usuário. O
 projeto combina um CRUD completo com autenticação OAuth, busca, tags,
 paginação e upload direto de imagens.
 
-![Landing page do Recipe Manager](docs/screenshots/landing.png)
+![Landing page do Baú de Receitas](docs/screenshots/landing.png)
 
 ![Listagem autenticada de receitas](docs/screenshots/recipes.png)
 

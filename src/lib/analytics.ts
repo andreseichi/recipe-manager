@@ -1,6 +1,6 @@
 import type { BeforeSendEvent } from "@vercel/analytics/next";
 
-const ANALYTICS_URL_BASE = "https://recipe-manager.local";
+const ANALYTICS_URL_BASE = "https://bau-de-receitas.local";
 const RECIPES_SEGMENT = "recipes";
 const NEW_RECIPE_SEGMENT = "new";
 

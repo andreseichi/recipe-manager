@@ -1,4 +1,4 @@
-name: recipe-manager
+name: bau-de-receitas
 
 services:
   postgres:
