@@ -167,7 +167,8 @@ export function RecipeDetailContent({
 
         {showUpdatedAt ? (
           <p className="mt-10 text-xs text-muted-foreground">
-            Atualizada em {formatDate(recipe.updatedAt)}
+            Criada em {formatDate(recipe.createdAt)} · Atualizada em{" "}
+            {formatDate(recipe.updatedAt)}
           </p>
         ) : null}
       </div>
