@@ -15,14 +15,14 @@ export default function RecipesLoading() {
         </div>
       </div>
       <div className="bg-background">
-        <div className="flex gap-2 overflow-hidden border-b border-border px-4 py-3 sm:px-7">
+        <div className="flex gap-2 overflow-hidden border-b border-border px-4 py-6 sm:px-7">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="h-9.5 w-24 shrink-0 rounded-full bg-muted" />
           ))}
         </div>
         <div className="flex items-center justify-between border-b border-border px-4 py-2 sm:px-7">
           <div className="h-5 w-28 rounded-lg bg-muted" />
-          <div className="h-9 w-48 rounded-full bg-muted" />
+          <div className="h-10 w-40 rounded-full bg-muted" />
         </div>
         <div className="grid gap-6 p-4 sm:grid-cols-2 sm:p-7 xl:grid-cols-4">
           {Array.from({ length: 6 }).map((_, index) => (

@@ -40,16 +40,18 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-7">
       <div className="grid w-full gap-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(18rem,34rem)_minmax(12rem,1fr)] lg:items-center">
-        <Link
-          href="/recipes"
-          prefetch={false}
-          className="inline-flex items-center gap-3 font-display text-xl font-bold tracking-tight"
-        >
-          <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-            <ShoppingBag className="size-5" aria-hidden="true" />
-          </span>
-          Baú de Receitas
-        </Link>
+        <div>
+          <Link
+            href="/recipes"
+            prefetch={false}
+            className="inline-flex items-center gap-3 font-display text-xl font-bold tracking-tight"
+          >
+            <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+              <ShoppingBag className="size-5" aria-hidden="true" />
+            </span>
+            Baú de Receitas
+          </Link>
+        </div>
 
         {centerContent ? (
           <div className="w-full lg:justify-self-center">{centerContent}</div>
@@ -57,7 +59,7 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
           <div className="hidden lg:block" aria-hidden="true" />
         )}
 
-        <div className="flex items-center gap-3 lg:justify-self-end">
+        <div className="flex items-center justify-between gap-3 lg:justify-self-end">
           <Button asChild size="sm" className="px-4">
             <Link href="/recipes/new" prefetch={false}>
               <Plus className="size-4" aria-hidden="true" />
