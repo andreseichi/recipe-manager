@@ -16,18 +16,15 @@ type RecipeCardProps = {
   imageLoading?: "eager" | "lazy";
 };
 
-export function RecipeCard({
-  recipe,
-  imageLoading = "lazy",
-}: RecipeCardProps) {
+export function RecipeCard({ recipe, imageLoading = "lazy" }: RecipeCardProps) {
   return (
     <Link
       href={`/recipes/${recipe.id}`}
       prefetch={false}
       className="group block rounded-[1.35rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-4"
     >
-      <Card className="h-full overflow-hidden rounded-[1.35rem] border-border bg-card shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:shadow-xl group-hover:shadow-primary/10">
-        <div className="relative aspect-[4/3] overflow-hidden border-b border-dashed border-border bg-muted/45">
+      <Card className="flex h-full flex-col overflow-hidden rounded-[1.35rem] border-border bg-card shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:shadow-xl group-hover:shadow-primary/10">
+        <div className="relative aspect-4/3 overflow-hidden border-b border-dashed border-border bg-muted/45">
           {recipe.imageUrl ? (
             <Image
               src={recipe.imageUrl}
@@ -47,23 +44,25 @@ export function RecipeCard({
             </div>
           )}
         </div>
-        <div className="p-5">
-          <h2 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
-            {recipe.title}
-          </h2>
-          {recipe.tags.length ? (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {recipe.tags.map((tag) => (
-                <span
-                  key={tag.normalizedName}
-                  className="rounded-full border border-border bg-secondary/70 px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
-                >
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          ) : null}
-          <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-muted-foreground">
+        <div className="flex flex-1 flex-col justify-between p-5">
+          <div>
+            <h2 className="font-display text-2xl font-bold leading-tight transition-colors group-hover:text-primary">
+              {recipe.title}
+            </h2>
+            {recipe.tags.length ? (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {recipe.tags.map((tag) => (
+                  <span
+                    key={tag.normalizedName}
+                    className="rounded-full border border-border bg-secondary/70 px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-2 pt-4 text-xs font-medium text-muted-foreground">
             {recipe.prepTimeMinutes ? (
               <span className="inline-flex items-center gap-1.5">
                 <Clock3 className="size-3.5" aria-hidden="true" />
