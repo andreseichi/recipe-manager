@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   distDir: process.env.NEXT_DIST_DIR,
   allowedDevOrigins: ["127.0.0.1"],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "256kb",
+    },
+  },
   images: {
     remotePatterns: [
       {
