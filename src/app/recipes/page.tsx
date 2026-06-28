@@ -102,6 +102,7 @@ export default async function RecipesPage({
                 >
                   <Link
                     href={getViewHref("list", { query, tag, page: currentPage })}
+                    prefetch={false}
                     aria-label="Ver receitas em lista"
                     aria-current={view === "list" ? "page" : undefined}
                   >
@@ -117,6 +118,7 @@ export default async function RecipesPage({
                 >
                   <Link
                     href={getViewHref("grid", { query, tag, page: currentPage })}
+                    prefetch={false}
                     aria-label="Ver receitas em grid"
                     aria-current={view === "grid" ? "page" : undefined}
                   >
@@ -181,7 +183,10 @@ export default async function RecipesPage({
                 : "Comece adicionando aquela receita que você sempre procura quando chega a hora de cozinhar."}
             </p>
             <Button asChild className="mt-6">
-              <Link href={hasFilters ? "/recipes" : "/recipes/new"}>
+              <Link
+                href={hasFilters ? "/recipes" : "/recipes/new"}
+                prefetch={false}
+              >
                 {hasFilters ? "Limpar filtros" : "Criar primeira receita"}
               </Link>
             </Button>

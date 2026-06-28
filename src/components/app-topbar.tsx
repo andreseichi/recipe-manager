@@ -42,6 +42,7 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
       <div className="grid w-full gap-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(18rem,34rem)_minmax(12rem,1fr)] lg:items-center">
         <Link
           href="/recipes"
+          prefetch={false}
           className="inline-flex items-center gap-3 font-display text-xl font-bold tracking-tight"
         >
           <span className="grid size-10 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
@@ -58,7 +59,7 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
 
         <div className="flex items-center gap-3 lg:justify-self-end">
           <Button asChild size="sm" className="px-4">
-            <Link href="/recipes/new">
+            <Link href="/recipes/new" prefetch={false}>
               <Plus className="size-4" aria-hidden="true" />
               Nova receita
             </Link>

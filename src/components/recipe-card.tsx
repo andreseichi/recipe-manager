@@ -25,6 +25,7 @@ export function RecipeCard({
   return (
     <Link
       href={`/recipes/${recipe.id}`}
+      prefetch={false}
       className="group block rounded-[1.35rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-4"
     >
       <Card className="h-full overflow-hidden rounded-[1.35rem] border-border bg-card shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:shadow-xl group-hover:shadow-primary/10">
@@ -92,6 +93,7 @@ export function RecipeListItem({
   return (
     <Link
       href={`/recipes/${recipe.id}`}
+      prefetch={false}
       className="group block border-b border-border last:border-b-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <article className="grid gap-4 bg-background px-4 py-4 transition hover:bg-muted/35 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:items-center sm:px-7">

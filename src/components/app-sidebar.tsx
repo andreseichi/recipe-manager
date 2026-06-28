@@ -58,6 +58,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
         <div className="flex items-center justify-between gap-3">
           <Link
             href="/recipes"
+            prefetch={false}
             className="inline-flex items-center gap-2 font-display text-lg font-bold"
           >
             <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground">
@@ -83,6 +84,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
         <div className="flex min-h-0 flex-1 flex-col px-4 py-8">
           <Link
             href="/recipes"
+            prefetch={false}
             className="mb-8 inline-flex items-center gap-3 px-1 font-display text-2xl font-bold"
           >
             <span className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
@@ -99,6 +101,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                 <Link
                   key={item.label}
                   href={item.href}
+                  prefetch={false}
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-muted-foreground transition hover:bg-secondary/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35",
                     item.active &&

@@ -71,6 +71,7 @@ export function RecipeFilters({
     >
       <Link
         href={getTagHref(query, undefined, view)}
+        prefetch={false}
         className={cn(
           "shrink-0 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:border-primary/30 hover:text-primary",
           !selectedTag &&
@@ -83,6 +84,7 @@ export function RecipeFilters({
         <Link
           key={tag.normalizedName}
           href={getTagHref(query, tag.normalizedName, view)}
+          prefetch={false}
           className={cn(
             "shrink-0 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:border-primary/30 hover:text-primary",
             selectedTag === tag.normalizedName &&
@@ -95,6 +97,7 @@ export function RecipeFilters({
       {hasFilters ? (
         <Link
           href={getTagHref(query, undefined, view)}
+          prefetch={false}
           className="inline-flex size-9.5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition hover:text-primary"
           aria-label="Limpar filtro por tag"
         >

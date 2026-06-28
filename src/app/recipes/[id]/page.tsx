@@ -53,6 +53,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
         <div className="mx-auto">
         <Link
           href="/recipes"
+          prefetch={false}
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground transition hover:text-primary"
         >
           <ArrowLeft className="size-3.5" aria-hidden="true" />
@@ -103,7 +104,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
 
           <div className="flex flex-wrap gap-2 md:justify-end">
             <Button asChild variant="outline" size="sm">
-              <Link href={`/recipes/${recipe.id}/edit`}>
+              <Link href={`/recipes/${recipe.id}/edit`} prefetch={false}>
                 <Pencil className="size-4" aria-hidden="true" />
                 Editar
               </Link>

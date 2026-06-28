@@ -17,7 +17,9 @@ export default function RecipeNotFound() {
           Ela pode ter sido removida ou pertencer a outra conta.
         </p>
         <Button asChild className="mt-6">
-          <Link href="/recipes">Voltar para minhas receitas</Link>
+          <Link href="/recipes" prefetch={false}>
+            Voltar para minhas receitas
+          </Link>
         </Button>
       </Card>
     </main>

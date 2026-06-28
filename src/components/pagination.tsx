@@ -41,7 +41,10 @@ export function Pagination({
     >
       {page > 1 ? (
         <Button asChild variant="outline" size="sm">
-          <Link href={getPageHref(page - 1, { query, tag, view })}>
+          <Link
+            href={getPageHref(page - 1, { query, tag, view })}
+            prefetch={false}
+          >
             <ChevronLeft className="size-4" aria-hidden="true" />
             Anterior
           </Link>
@@ -57,7 +60,10 @@ export function Pagination({
       </span>
       {page < totalPages ? (
         <Button asChild variant="outline" size="sm">
-          <Link href={getPageHref(page + 1, { query, tag, view })}>
+          <Link
+            href={getPageHref(page + 1, { query, tag, view })}
+            prefetch={false}
+          >
             Próxima
             <ChevronRight className="size-4" aria-hidden="true" />
           </Link>

@@ -306,7 +306,9 @@ export function RecipeForm({
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <Button asChild type="button" variant="outline" size="lg">
-          <Link href={cancelHref}>Cancelar</Link>
+          <Link href={cancelHref} prefetch={false}>
+            Cancelar
+          </Link>
         </Button>
         <Button type="submit" size="lg" disabled={pending}>
           {pending ? "Salvando..." : submitLabel}
