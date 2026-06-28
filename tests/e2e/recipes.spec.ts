@@ -28,7 +28,11 @@ async function signInTestUser(page: Page, email: string) {
   expect(response.ok(), await response.text()).toBe(true);
 }
 
-async function createRecipe(page: Page, title: string) {
+async function createRecipe(
+  page: Page,
+  title: string,
+  tags = "teste, rápido",
+) {
   await page.goto("/recipes/new");
   await dismissReleaseNoticeIfVisible(page);
   await page.getByLabel("Nome da receita").fill(title);
@@ -44,7 +48,7 @@ async function createRecipe(page: Page, title: string) {
   await page.getByLabel("Tempo (minutos)").fill("35");
   await page.getByLabel("Porções").fill("4");
   await page.getByLabel("Dificuldade").selectOption("EASY");
-  await page.getByLabel("Tags").fill("teste, rápido");
+  await page.getByLabel("Tags").fill(tags);
   await page.getByRole("button", { name: "Salvar receita" }).click();
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
 }
@@ -54,16 +58,74 @@ async function expectRecipePreviewTags(
   title: string,
   tags: string[],
 ) {
-  const recipePreview = page
-    .getByRole("link")
-    .filter({ has: page.getByRole("heading", { name: title }) })
-    .first();
+  const recipePreview = getRecipePreview(page, title);
 
   await expect(recipePreview).toBeVisible();
 
   for (const tag of tags) {
     await expect(recipePreview.getByText(tag, { exact: true })).toBeVisible();
   }
+}
+
+function getRecipePreview(page: Page, title: string) {
+  return page
+    .getByRole("link")
+    .filter({ has: page.getByRole("heading", { name: title }) })
+    .first();
+}
+
+async function expectTagFiltersCanScrollAndDrag(page: Page) {
+  const tagFilters = page.getByRole("navigation", {
+    name: "Filtrar receitas por tag",
+  });
+  const viewport = tagFilters.locator("[data-radix-scroll-area-viewport]");
+
+  await expect(tagFilters).toBeVisible();
+  await expect
+    .poll(async () =>
+      viewport.evaluate((element) => ({
+        clientWidth: element.clientWidth,
+        scrollWidth: element.scrollWidth,
+      })),
+    )
+    .toMatchObject({
+      clientWidth: expect.any(Number),
+      scrollWidth: expect.any(Number),
+    });
+  await expect
+    .poll(async () =>
+      viewport.evaluate(
+        (element) => element.scrollWidth > element.clientWidth,
+      ),
+    )
+    .toBe(true);
+
+  const box = await viewport.boundingBox();
+  expect(box).not.toBeNull();
+
+  const currentUrl = page.url();
+  const y = box!.y + box!.height / 2;
+
+  await page.mouse.move(box!.x + box!.width / 2, y);
+  await page.mouse.wheel(500, 0);
+  await expect(page).toHaveURL(currentUrl);
+  await expect
+    .poll(async () => viewport.evaluate((element) => element.scrollLeft))
+    .toBeGreaterThan(0);
+
+  await viewport.evaluate((element) => {
+    element.scrollLeft = 0;
+  });
+
+  await page.mouse.move(box!.x + box!.width - 12, y);
+  await page.mouse.down();
+  await page.mouse.move(box!.x + 12, y, { steps: 8 });
+  await page.mouse.up();
+
+  await expect(page).toHaveURL(currentUrl);
+  await expect
+    .poll(async () => viewport.evaluate((element) => element.scrollLeft))
+    .toBeGreaterThan(0);
 }
 
 async function expectRecipeDetailTags(page: Page, tags: string[]) {
@@ -147,6 +209,9 @@ test("landing and complete recipe workflow", async ({ page }) => {
   ]);
 
   await page.getByRole("link", { name: "rápido", exact: true }).click();
+  await expect
+    .poll(() => new URL(page.url()).searchParams.get("tag"))
+    .toBe("rápido");
   await expect(
     page.getByRole("heading", { name: `${title} editado` }),
   ).toBeVisible();
@@ -188,6 +253,40 @@ test("release notice is persisted per user", async ({ page }) => {
   await createTestUser(page, "release-visitor");
   await page.goto("/recipes");
   await expect(getReleaseToast(page)).toBeVisible();
+});
+
+test("recipe tag filters scroll horizontally by wheel and drag", async ({ page }) => {
+  const title = `Receita com tags rolaveis ${Date.now()}`;
+  const longTags = [
+    "tag extensa numero um",
+    "tag extensa numero dois",
+    "tag extensa numero tres",
+    "tag extensa numero quatro",
+    "tag extensa numero cinco",
+    "tag extensa numero seis",
+    "tag extensa numero sete",
+    "tag extensa numero oito",
+    "tag extensa numero nove",
+    "tag extensa numero dez",
+  ];
+
+  await createTestUser(page, "tag-scroll");
+  await createRecipe(page, title, longTags.join(", "));
+
+  await page.goto(`/recipes?view=grid&q=${encodeURIComponent(title)}`);
+  await expectTagFiltersCanScrollAndDrag(page);
+  await expectRecipePreviewTags(page, title, [
+    "tag extensa numero um",
+    "tag extensa numero dez",
+  ]);
+
+  await page.getByRole("link", { name: "Ver receitas em lista" }).click();
+  await expect(page).toHaveURL(/view=list/);
+  await expectTagFiltersCanScrollAndDrag(page);
+  await expectRecipePreviewTags(page, title, [
+    "tag extensa numero um",
+    "tag extensa numero dez",
+  ]);
 });
 
 test("recipe sharing link is public and revocable", async ({ page }) => {

@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
+import { RecipeTagFilterScrollArea } from "@/components/recipe-tag-filter-scroll-area";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 type RecipeSearchProps = {
   query?: string;
@@ -18,17 +17,6 @@ type RecipeFiltersProps = RecipeSearchProps & {
     };
   }>;
 };
-
-function getTagHref(query?: string, tag?: string, view?: "list" | "grid") {
-  const searchParams = new URLSearchParams();
-
-  if (query) searchParams.set("q", query);
-  if (tag) searchParams.set("tag", tag);
-  if (view) searchParams.set("view", view);
-
-  const queryString = searchParams.toString();
-  return queryString ? `/recipes?${queryString}` : "/recipes";
-}
 
 export function RecipeSearch({ query, selectedTag, view }: RecipeSearchProps) {
   return (
@@ -61,49 +49,12 @@ export function RecipeFilters({
   view,
   tags,
 }: RecipeFiltersProps) {
-  const hasFilters = Boolean(selectedTag);
-
   return (
-    <nav
-      id="recipe-tags"
-      className="flex items-center gap-2 overflow-x-auto"
-      aria-label="Filtrar receitas por tag"
-    >
-      <Link
-        href={getTagHref(query, undefined, view)}
-        prefetch={false}
-        className={cn(
-          "shrink-0 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:border-primary/30 hover:text-primary",
-          !selectedTag &&
-            "border-primary bg-primary text-primary-foreground hover:text-primary-foreground",
-        )}
-      >
-        Todas
-      </Link>
-      {tags.map((tag) => (
-        <Link
-          key={tag.normalizedName}
-          href={getTagHref(query, tag.normalizedName, view)}
-          prefetch={false}
-          className={cn(
-            "shrink-0 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground shadow-sm transition hover:border-primary/30 hover:text-primary",
-            selectedTag === tag.normalizedName &&
-              "border-primary bg-primary text-primary-foreground hover:text-primary-foreground",
-          )}
-        >
-          {tag.name}
-        </Link>
-      ))}
-      {hasFilters ? (
-        <Link
-          href={getTagHref(query, undefined, view)}
-          prefetch={false}
-          className="inline-flex size-9.5 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition hover:text-primary"
-          aria-label="Limpar filtro por tag"
-        >
-          <X className="size-4" aria-hidden="true" />
-        </Link>
-      ) : null}
-    </nav>
+    <RecipeTagFilterScrollArea
+      query={query}
+      selectedTag={selectedTag}
+      view={view}
+      tags={tags}
+    />
   );
 }

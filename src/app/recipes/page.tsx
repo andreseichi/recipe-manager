@@ -73,7 +73,7 @@ export default async function RecipesPage({
       <main className="bg-muted/20">
         <h1 className="sr-only">Todas as receitas</h1>
         <section className="bg-background">
-          <div className="border-b border-border px-4 py-3 sm:px-7">
+          <div className="border-b border-border px-4 sm:px-7">
             <RecipeFilters
               query={query}
               selectedTag={tag}
