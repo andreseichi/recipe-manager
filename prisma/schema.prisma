@@ -88,6 +88,8 @@ model Recipe {
   servings        Int?
   difficulty      Difficulty?
   imageUrl        String?
+  shareToken      String?     @unique @db.VarChar(80)
+  sharedAt        DateTime?
   userId          String
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   tags            Tag[]

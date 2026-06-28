@@ -14,6 +14,17 @@ async function createTestUser(page: Page, prefix: string) {
   return email;
 }
 
+async function signInTestUser(page: Page, email: string) {
+  const response = await page.request.post("/api/auth/sign-in/email", {
+    data: {
+      email,
+      password: "test-password-123",
+    },
+  });
+
+  expect(response.ok(), await response.text()).toBe(true);
+}
+
 async function createRecipe(page: Page, title: string) {
   await page.goto("/recipes/new");
   await page.getByLabel("Nome da receita").fill(title);
@@ -121,6 +132,43 @@ test("release notice is persisted per user", async ({ page }) => {
   await createTestUser(page, "release-visitor");
   await page.goto("/recipes");
   await expect(getReleaseToast(page)).toBeVisible();
+});
+
+test("recipe sharing link is public and revocable", async ({ page }) => {
+  const email = await createTestUser(page, "share-owner");
+  const title = `Receita compartilhada ${Date.now()}`;
+  await createRecipe(page, title);
+  const privateRecipeUrl = page.url();
+
+  await page.getByRole("button", { name: "Compartilhar" }).click();
+  await page.getByRole("button", { name: "Gerar link" }).click();
+
+  const publicLinkInput = page.getByLabel("Link público");
+  await expect(publicLinkInput).toHaveValue(/\/receitas\//);
+  const publicRecipeUrl = await publicLinkInput.inputValue();
+
+  await page.context().clearCookies();
+  await page.goto(publicRecipeUrl);
+  await expect(page.getByRole("heading", { name: title })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Editar" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Excluir" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Compartilhar" }),
+  ).toHaveCount(0);
+
+  await signInTestUser(page, email);
+  await page.goto(privateRecipeUrl);
+  await page.getByRole("button", { name: "Compartilhar" }).click();
+  await page.getByRole("button", { name: "Desativar link" }).click();
+  await expect(
+    page.getByText("Link de compartilhamento desativado."),
+  ).toBeVisible();
+
+  await page.context().clearCookies();
+  await page.goto(publicRecipeUrl);
+  await expect(
+    page.getByRole("heading", { name: "Receita não encontrada" }),
+  ).toBeVisible();
 });
 
 test("a user cannot open another user's recipe by id", async ({ page }) => {

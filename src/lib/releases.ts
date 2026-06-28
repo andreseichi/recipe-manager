@@ -8,6 +8,16 @@ export type AppRelease = {
 
 export const APP_RELEASES = [
   {
+    id: "2026-06-28-recipe-sharing",
+    version: "0.3.0",
+    releasedAt: "2026-06-28",
+    title: "Compartilhamento de receitas",
+    changes: [
+      "Agora voce pode gerar um link publico para compartilhar uma receita.",
+      "O link pode ser desativado quando quiser, invalidando o acesso antigo.",
+    ],
+  },
+  {
     id: "2026-06-27-release-notifications",
     version: "0.2.0",
     releasedAt: "2026-06-27",

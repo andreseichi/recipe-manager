@@ -5,6 +5,7 @@ import type { Difficulty, Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isOwnedRecipeImage } from "@/lib/image-policy";
 import { getPaginationState } from "@/lib/pagination";
+import { createShareToken, isShareToken } from "@/lib/recipe-sharing";
 import { requireCurrentUser } from "@/lib/session";
 import {
   normalizeTagName,
@@ -25,6 +26,13 @@ export class InvalidRecipeImageError extends Error {
   constructor() {
     super("The recipe image does not belong to the current user.");
     this.name = "InvalidRecipeImageError";
+  }
+}
+
+export class RecipeShareTokenError extends Error {
+  constructor() {
+    super("Could not create a public recipe share token.");
+    this.name = "RecipeShareTokenError";
   }
 }
 
@@ -58,6 +66,8 @@ const recipeDetailSelect = {
   ...recipeListSelect,
   ingredients: true,
   steps: true,
+  shareToken: true,
+  sharedAt: true,
   createdAt: true,
 } satisfies Prisma.RecipeSelect;
 
@@ -210,6 +220,117 @@ export const getRecipeById = cache(async (id: string) => {
     select: recipeDetailSelect,
   });
 });
+
+export const getSharedRecipeByToken = cache(async (token: string) => {
+  if (!isShareToken(token)) return null;
+
+  return prisma.recipe.findUnique({
+    where: {
+      shareToken: token,
+    },
+    select: recipeDetailSelect,
+  });
+});
+
+export async function enableRecipeSharingForUser(id: string) {
+  const user = await requireCurrentUser();
+  const recipe = await prisma.recipe.findFirst({
+    where: {
+      id,
+      userId: user.id,
+    },
+    select: {
+      id: true,
+      shareToken: true,
+    },
+  });
+
+  if (!recipe) {
+    throw new RecipeNotFoundError();
+  }
+
+  if (recipe.shareToken) {
+    return {
+      shareToken: recipe.shareToken,
+    };
+  }
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const shareToken = createShareToken();
+    const collision = await prisma.recipe.findUnique({
+      where: {
+        shareToken,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (collision) continue;
+
+    const sharedRecipe = await prisma.recipe.update({
+      where: {
+        id: recipe.id,
+      },
+      data: {
+        shareToken,
+        sharedAt: new Date(),
+      },
+      select: {
+        shareToken: true,
+      },
+    });
+
+    if (sharedRecipe.shareToken) {
+      return {
+        shareToken: sharedRecipe.shareToken,
+      };
+    }
+  }
+
+  throw new RecipeShareTokenError();
+}
+
+export async function disableRecipeSharingForUser(id: string) {
+  const user = await requireCurrentUser();
+  const recipe = await prisma.recipe.findFirst({
+    where: {
+      id,
+      userId: user.id,
+    },
+    select: {
+      id: true,
+      shareToken: true,
+    },
+  });
+
+  if (!recipe) {
+    throw new RecipeNotFoundError();
+  }
+
+  if (!recipe.shareToken) {
+    return {
+      previousShareToken: null,
+    };
+  }
+
+  await prisma.recipe.update({
+    where: {
+      id: recipe.id,
+    },
+    data: {
+      shareToken: null,
+      sharedAt: null,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return {
+    previousShareToken: recipe.shareToken,
+  };
+}
 
 export async function createRecipeRecord(input: RecipeInput) {
   const user = await requireCurrentUser();
