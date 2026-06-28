@@ -168,9 +168,14 @@ export async function getRecipeList(filters: RecipeListFilters) {
     ? await prisma.recipe.findMany({
         where,
         select: recipeListSelect,
-        orderBy: {
-          updatedAt: "desc",
-        },
+        orderBy: [
+          {
+            createdAt: "desc",
+          },
+          {
+            id: "desc",
+          },
+        ],
         skip: (page - 1) * RECIPES_PER_PAGE,
         take: RECIPES_PER_PAGE,
       })

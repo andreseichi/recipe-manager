@@ -96,7 +96,7 @@ model Recipe {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
-  @@index([userId, updatedAt])
+  @@index([userId, createdAt, id])
   @@map("recipe")
 }
 

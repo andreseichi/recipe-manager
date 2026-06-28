@@ -87,7 +87,7 @@ export default async function RecipesPage({
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2">
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
-                Ordenar: recentes
+                Ordenar: criação recente
               </span>
               <div
                 className="inline-flex rounded-full border border-border bg-card p-1"
