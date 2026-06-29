@@ -244,6 +244,18 @@ test("landing and complete recipe workflow", async ({ page }) => {
 test("release notice is persisted per user", async ({ page }) => {
   await createTestUser(page, "release-owner");
   await page.goto("/recipes");
+
+  const notice = getReleaseToast(page);
+
+  await expect(notice).toBeVisible();
+  await notice.getByRole("button", { name: "Ver novidades" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page
+    .getByTestId("release-dialog-backdrop")
+    .click({ position: { x: 8, y: 8 } });
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(notice).toBeVisible();
+
   await acknowledgeReleaseNotice(page);
 
   await page.reload();

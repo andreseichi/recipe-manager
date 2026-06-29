@@ -74,12 +74,17 @@ export function ReleaseNotification({ release }: ReleaseNotificationProps) {
       </aside>
 
       {open ? (
-        <div className="fixed inset-0 z-[60] grid place-items-center bg-foreground/35 px-4 py-6 backdrop-blur-sm">
+        <div
+          className="fixed inset-0 z-[60] grid place-items-center bg-foreground/35 px-4 py-6 backdrop-blur-sm"
+          data-testid="release-dialog-backdrop"
+          onClick={() => setOpen(false)}
+        >
           <div
             className="w-full max-w-lg rounded-2xl border border-border bg-background p-5 shadow-xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="release-dialog-title"
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
