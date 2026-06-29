@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { AuthButtons } from "@/components/auth-buttons";
 import { Brand } from "@/components/brand";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getCurrentSession } from "@/lib/session";
@@ -23,9 +24,12 @@ export default async function HomePage() {
     <main className="min-h-screen overflow-hidden">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 sm:px-8">
         <Brand />
-        <span className="hidden text-sm text-muted-foreground sm:inline">
-          Seu caderno culinário, sempre por perto.
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-sm text-muted-foreground sm:inline">
+            Seu caderno culinário, sempre por perto.
+          </span>
+          <ThemeToggle />
+        </div>
       </div>
 
       <section className="relative mx-auto grid max-w-7xl gap-12 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-24">

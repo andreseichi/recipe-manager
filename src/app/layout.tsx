@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
 import { VercelAnalytics } from "@/components/vercel-analytics";
 import "./globals.css";
 
@@ -17,10 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="h-full antialiased">
+    <html lang="pt-BR" className="h-full antialiased" suppressHydrationWarning>
       <body className="flex min-h-full flex-col">
-        {children}
-        <VercelAnalytics />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <VercelAnalytics />
+        </ThemeProvider>
       </body>
     </html>
   );

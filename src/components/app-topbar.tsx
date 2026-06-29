@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOut, Plus, ShoppingBag } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
@@ -39,8 +40,8 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 px-4 py-4 backdrop-blur sm:px-6 lg:px-7">
-      <div className="grid w-full gap-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(18rem,34rem)_minmax(12rem,1fr)] lg:items-center">
-        <div>
+      <div className="grid w-full gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,32rem)_minmax(0,1fr)] lg:items-center">
+        <div className="min-w-0">
           <Link
             href="/recipes"
             prefetch={false}
@@ -59,32 +60,35 @@ export function AppTopbar({ user, centerContent }: AppTopbarProps) {
           <div className="hidden lg:block" aria-hidden="true" />
         )}
 
-        <div className="flex items-center justify-between gap-3 lg:justify-self-end">
+        <div className="flex items-center justify-between gap-3 lg:min-w-0 lg:justify-self-end">
           <Button asChild size="sm" className="px-4">
             <Link href="/recipes/new" prefetch={false}>
               <Plus className="size-4" aria-hidden="true" />
               Nova receita
             </Link>
           </Button>
-          <div className="flex items-center gap-2 rounded-full border border-border box-content bg-card pr-2 shadow-sm">
-            <span
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground"
-              aria-hidden="true"
-            >
-              {initials}
-            </span>
-            <span className="hidden max-w-36 truncate text-xs font-semibold sm:inline">
-              {user.name}
-            </span>
-            <button
-              type="button"
-              onClick={signOut}
-              disabled={pending}
-              className="grid size-8 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-destructive disabled:opacity-60"
-              aria-label={pending ? "Saindo da conta" : "Sair da conta"}
-            >
-              <LogOut className="size-4" aria-hidden="true" />
-            </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="flex items-center gap-2 rounded-full border border-border box-content bg-card pr-2 shadow-sm">
+              <span
+                className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground"
+                aria-hidden="true"
+              >
+                {initials}
+              </span>
+              <span className="hidden max-w-36 truncate text-xs font-semibold sm:inline">
+                {user.name}
+              </span>
+              <button
+                type="button"
+                onClick={signOut}
+                disabled={pending}
+                className="grid size-8 place-items-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-destructive disabled:opacity-60"
+                aria-label={pending ? "Saindo da conta" : "Sair da conta"}
+              >
+                <LogOut className="size-4" aria-hidden="true" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

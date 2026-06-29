@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #fbfaff;
   --foreground: #241c2e;
   --card: #fffefe;
@@ -14,6 +15,31 @@
   --accent: #a78bfa;
   --border: #e5dcf7;
   --destructive: #b93832;
+  --body-glow-start: rgba(167, 139, 250, 0.16);
+  --body-glow-end: rgba(124, 58, 237, 0.1);
+  --selection-background: #ddd6fe;
+  --selection-foreground: #2e1065;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #101014;
+  --foreground: #f7f2ff;
+  --card: #18151d;
+  --card-foreground: #f7f2ff;
+  --primary: #c4b5fd;
+  --primary-foreground: #241238;
+  --secondary: #2a2435;
+  --secondary-foreground: #eadfff;
+  --muted: #211c29;
+  --muted-foreground: #b9afc3;
+  --accent: #f0abfc;
+  --border: #392f48;
+  --destructive: #f87171;
+  --body-glow-start: rgba(196, 181, 253, 0.12);
+  --body-glow-end: rgba(240, 171, 252, 0.08);
+  --selection-background: #5b3f86;
+  --selection-foreground: #ffffff;
 }
 
 @theme inline {
@@ -39,14 +65,14 @@ body {
   color: var(--foreground);
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   background-image:
-    radial-gradient(circle at 5% 0%, rgba(167, 139, 250, 0.16), transparent 26rem),
-    radial-gradient(circle at 95% 10%, rgba(124, 58, 237, 0.1), transparent 24rem);
+    radial-gradient(circle at 5% 0%, var(--body-glow-start), transparent 26rem),
+    radial-gradient(circle at 95% 10%, var(--body-glow-end), transparent 24rem);
   background-attachment: fixed;
 }
 
 ::selection {
-  background: #ddd6fe;
-  color: #2e1065;
+  background: var(--selection-background);
+  color: var(--selection-foreground);
 }
 
 button,
