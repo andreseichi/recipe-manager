@@ -8,12 +8,21 @@ export type AppRelease = {
 
 export const APP_RELEASES = [
   {
+    id: "2026-06-29-dark-mode",
+    version: "0.4.0",
+    releasedAt: "2026-06-29",
+    title: "Modo escuro",
+    changes: [
+      "Agora você pode alternar entre tema claro e escuro no app.",
+    ],
+  },
+  {
     id: "2026-06-28-recipe-sharing",
     version: "0.3.0",
     releasedAt: "2026-06-28",
     title: "Compartilhamento de receitas",
     changes: [
-      "Agora voce pode gerar um link publico para compartilhar uma receita.",
+      "Agora você pode gerar um link público para compartilhar uma receita.",
       "O link pode ser desativado quando quiser, invalidando o acesso antigo.",
     ],
   },
@@ -23,8 +32,8 @@ export const APP_RELEASES = [
     releasedAt: "2026-06-27",
     title: "Avisos de novidades no app",
     changes: [
-      "Agora o app avisa quando uma nova versao estiver disponivel.",
-      "As novidades ficam vinculadas a sua conta e nao reaparecem depois de vistas.",
+      "Agora o app avisa quando uma nova versão estiver disponível.",
+      "As novidades ficam vinculadas à sua conta e não reaparecem depois de vistas.",
     ],
   },
 ] satisfies AppRelease[];
